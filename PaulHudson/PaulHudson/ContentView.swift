@@ -11,17 +11,53 @@ struct ContentView: View {
     @State private var checkAmount = 0.0
     @State private var numberOfPeople = 2
     @State private var tipPercentage = 20
+    
+    var totalPersons: Double {
+        let peopleCount = Double(numberOfPeople + 2)
+        let tipSelection = Double(tipPercentage)
+        
+        let tipValue = checkAmount / 100 * tipSelection
+        let grandTotal = checkAmount + tipValue
+        let amountPerPerson = grandTotal / peopleCount
+        
+        return amountPerPerson
+    }
+    
     let tipPercentages = [10, 15, 20, 25, 0]
     
     var body: some View {
-        Form {
-            Section {
-                TextField("Amount", value: $checkAmount, format: .currency(code: Locale.current.currencyCode ?? "USD"))
+        NavigationView {
+            Form {
+                Section {
+                    TextField("Amount", value: $checkAmount, format: .currency(code: Locale.current.currencyCode ?? "USD"))
+                        .keyboardType(.decimalPad)
+                }
+                
+                Section {
+                    Text(totalPersons, format: .currency(code: Locale.current.currencyCode ?? "USD"))
+                }
+                
+                Section {
+                    Picker("Number of people", selection: $numberOfPeople) {
+                        ForEach(2..<100) { customer in
+                            Text(" \(customer) people")
+                        }
+                    }
+                }
+                
+                Section {
+                    Picker("Tip percentage", selection: $tipPercentage) {
+                        ForEach(tipPercentages, id:\.self) { tips in
+                            Text(tips, format: .percent)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+            header: {
+                Text("How much tip do you want to leave?")
             }
-
-            Section {
-                Text(checkAmount, format: .currency(code: Locale.current.currencyCode ?? "USD"))
             }
+            .navigationBarTitle("WeSplit")
         }
     }
 }
