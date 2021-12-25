@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @FocusState private var amountIsFocused: Bool
+    
     @State private var checkAmount = 0.0
     @State private var numberOfPeople = 2
     @State private var tipPercentage = 20
@@ -31,6 +33,7 @@ struct ContentView: View {
                 Section {
                     TextField("Amount", value: $checkAmount, format: .currency(code: Locale.current.currencyCode ?? "USD"))
                         .keyboardType(.decimalPad)
+                        .focused($amountIsFocused)
                 }
                 
                 Section {
@@ -58,6 +61,15 @@ struct ContentView: View {
             }
             }
             .navigationBarTitle("WeSplit")
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    
+                    Button("Done") {
+                        amountIsFocused = false
+                    }
+                }
+            }
         }
     }
 }
